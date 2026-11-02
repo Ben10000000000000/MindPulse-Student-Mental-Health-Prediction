@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#050912" />
+<meta name="description" content="MindPulse predicts a 0-10 student wellness score from daily habits and shows which habits are behind it, with a personal action plan." />
+<title>MindPulse — Find what is behind your score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=5" />
+</head>
+<body data-mood="idle">
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="grain" aria-hidden="true"></div>
+<a class="skip" href="#assessment">Skip to the check-in</a>
+
+<section id="auth-screen" class="auth-screen" aria-label="MindPulse account">
+  <canvas id="auth-canvas" aria-hidden="true"></canvas>
+  <div class="auth-glow auth-glow-a"></div><div class="auth-glow auth-glow-b"></div>
+  <div class="auth-shell">
+    <div class="auth-showcase">
+      <div class="auth-brand"><span class="auth-logo">⌁</span><div><strong>MindPulse</strong><small>Student wellness, privately.</small></div></div>
+      <h2 class="showcase-title">Understand your mind,<br><span>one day at a time.</span></h2>
+      <p class="showcase-copy">Share a typical day. Get a wellness score, the habits behind it and a doctor-style plan you can start today.</p>
+      <div class="orbit-stage" id="orbit-stage" aria-hidden="true">
+        <div class="orbit-core"><b>⌁</b></div>
+        <div class="orbit-ring ring-a"><i class="orbit-chip">Sleep</i></div>
+        <div class="orbit-ring ring-b"><i class="orbit-chip">Stress</i></div>
+        <div class="orbit-ring ring-c"><i class="orbit-chip">Focus</i></div>
+      </div>
+      <ul class="showcase-points">
+        <li><b>Private</b> Your reports belong to your account only.</li>
+        <li><b>Personal</b> Plans built from your own numbers.</li>
+        <li><b>Practical</b> Small steps, one change at a time.</li>
+      </ul>
+    </div>
+    <div class="auth-card-wrap" id="auth-card-wrap">
+    <div class="auth-card">
+      <div class="auth-copy"><span class="eyebrow">PRIVATE WELLNESS SPACE</span><h1 id="auth-title">Welcome back</h1><p id="auth-subtitle">Sign in to keep your wellness check-ins and reports connected to your account.</p></div>
+
+      <form id="auth-signin" class="auth-form" novalidate>
+        <label>Email<input id="auth-login-email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label>Password<div class="password-box"><input id="auth-login-password" type="password" autocomplete="current-password" placeholder="Your password" required><button type="button" class="eye-btn" data-toggle-password="auth-login-password">Show</button></div></label>
+        <p class="auth-error" id="signin-error"></p><button class="auth-submit" type="submit"><span>Sign in</span><i></i></button>
+        <div class="auth-links"><button type="button" data-auth-view="forgot">Forgot password?</button><button type="button" data-auth-view="signup">Create account</button></div>
+      </form>
+
+      <form id="auth-signup" class="auth-form" hidden novalidate>
+        <label>Full name<input id="auth-signup-name" type="text" autocomplete="name" placeholder="Your name" required></label>
+        <label>Gmail / Email<input id="auth-signup-email" type="email" autocomplete="email" placeholder="you@gmail.com" required></label>
+        <label>Password<div class="password-box"><input id="auth-signup-password" type="password" autocomplete="new-password" placeholder="At least 8 characters"><button type="button" class="eye-btn" data-toggle-password="auth-signup-password">Show</button></div></label>
+        <div class="password-strength"><i id="password-strength-bar"></i><span id="password-strength-text">Use a letter and number</span></div>
+        <p class="auth-error" id="signup-error"></p><button class="auth-submit" type="submit"><span>Create account</span><i></i></button>
+        <div class="auth-links"><button type="button" data-auth-view="signin">Already have an account? Sign in</button></div>
+      </form>
+
+      <form id="auth-verify" class="auth-form" hidden novalidate>
+        <div class="verify-icon">✓</div><h2>Check your email</h2><p class="auth-stage-copy">We sent a 6-digit code and a secure verification link to <b id="verify-email-label"></b>.</p>
+        <label>Verification code<input id="auth-verify-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456"></label>
+        <p class="auth-error" id="verify-error"></p><button class="auth-submit" type="submit"><span>Verify email</span><i></i></button>
+        <div class="auth-links"><button type="button" id="resend-verify">Resend code</button><button type="button" data-auth-view="signin">Back to sign in</button></div>
+      </form>
+
+      <form id="auth-forgot" class="auth-form" hidden novalidate>
+        <div class="verify-icon">↻</div><h2>Forgot password?</h2><p class="auth-stage-copy">Enter your account email. We will send a one-time code and secure reset link.</p>
+        <label>Email<input id="auth-forgot-email" type="email" autocomplete="email" placeholder="you@gmail.com" required></label>
+        <p class="auth-error" id="forgot-error"></p><button class="auth-submit" type="submit"><span>Send reset code</span><i></i></button>
+        <div class="auth-links"><button type="button" data-auth-view="signin">Back to sign in</button></div>
+      </form>
+
+      <form id="auth-reset" class="auth-form" hidden novalidate>
+        <div class="verify-icon">⌘</div><h2>Set a new password</h2><p class="auth-stage-copy">Enter the code from your email or use the secure reset link.</p>
+        <label>Email<input id="auth-reset-email" type="email" autocomplete="email" placeholder="you@gmail.com" required></label>
+        <label>OTP code<input id="auth-reset-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456"></label>
+        <label>New password<div class="password-box"><input id="auth-reset-password" type="password" autocomplete="new-password" placeholder="At least 8 characters"><button type="button" class="eye-btn" data-toggle-password="auth-reset-password">Show</button></div></label>
+        <p class="auth-error" id="reset-error"></p><button class="auth-submit" type="submit"><span>Change password</span><i></i></button>
+        <div class="auth-links"><button type="button" data-auth-view="signin">Back to sign in</button></div>
+      </form>
+    </div>
+    <p class="auth-disclaimer">Academic wellness project · Your account data is scoped to your account. This tool is not a medical diagnosis.</p>
+    </div>
+  </div>
+</section>
+<div class="toast-root" id="toast-root" aria-live="polite" aria-atomic="false"></div>
+
+<header class="topbar">
+  <a class="brand" href="#top" aria-label="MindPulse home">
+    <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-opacity=".35"/><path d="M3 17h7l3-8 5 15 3-9 2 2h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>MindPulse</span>
+  </a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#assessment">Check-in</a>
+    <a href="#report" id="nav-report" hidden>Your report</a>
+    <a href="#community">Your progress</a>
+    <a href="#history-section">History</a>
+    <a href="#profile-section" id="nav-profile">Profile</a>
+  </nav>
+  <div class="account-actions"><span id="nav-user-name"></span><button id="logout-btn" class="btn ghost small" type="button">Logout</button></div>
+  <div class="status-pills" aria-live="polite">
+    <span class="pill"><i class="dot" id="api-dot"></i><span id="api-status">Connecting…</span></span>
+    <span class="pill"><i class="dot" id="db-dot"></i><span id="db-status">Checking…</span></span>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero wrap">
+    <div class="hero-copy">
+      <h1>Find what is behind your score.</h1>
+      <p class="lede">MindPulse turns your daily habits into a 0–10 wellness score, then shows which habits are pulling it down and what to change first. Two people can land on the same score for very different reasons, and their plans should differ too.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#assessment">Start your check-in</a>
+        <span class="hero-note">Takes about a minute. Not a diagnosis.</span>
+      </div>
+    </div>
+    <div class="orb-wrap" aria-hidden="true">
+      <canvas id="orb"></canvas>
+      <div class="orb-core"><strong id="orb-score">0–10</strong><span id="orb-caption">wellness score</span></div>
+    </div>
+  </section>
+
+
+
+  <section class="wrap assess" id="assessment">
+    <div class="card form-card">
+      <div class="card-head">
+        <div><h2>Your typical day</h2><p class="sub">Use an ordinary day, not your best or worst one.</p></div>
+        <div class="progress-wrap"><span id="progress-text">0% complete</span><div class="progress"><i id="progress-bar"></i></div></div>
+      </div>
+
+      <form id="predict-form" novalidate>
+        <fieldset class="group">
+          <legend>About you</legend>
+          <div class="grid three">
+            <div class="field"><label for="age">Age</label><input type="number" id="age" name="age" min="10" max="100" step="1" placeholder="21" inputmode="numeric" required /><span class="hint" id="hint-age">Years</span><span class="error-msg"></span></div>
+            <div class="field"><label for="gender">Gender</label><select id="gender" name="gender" required><option value="" selected disabled>Select</option><option>Male</option><option>Female</option></select><span class="error-msg"></span></div>
+            <div class="field"><label for="country">Country</label><select id="country" name="country" required><option value="" selected disabled>Select country</option></select><span class="hint">Choose a country represented in the training dataset.</span><span class="error-msg"></span></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Screens and study</legend>
+          <div class="grid two">
+            <div class="field"><label for="academic_level">Academic level</label><select id="academic_level" name="academic_level" required><option value="" selected disabled>Select level</option></select><span class="hint" id="academic-hint">Choose your broad education stage.</span><span class="error-msg"></span></div>
+            <div class="field"><label for="employment_status">Employment status</label><select id="employment_status" name="employment_status" required><option value="" selected disabled>Select employment status</option></select><span class="hint">Your current work or internship status.</span><span class="error-msg"></span></div>
+            <div class="field"><label for="most_used_platform">Most-used platform</label><select id="most_used_platform" name="most_used_platform" required><option value="" selected disabled>Select platform</option></select><span class="error-msg"></span></div>
+            <div class="field"><label for="purpose_of_use">Main purpose</label><select id="purpose_of_use" name="purpose_of_use" required><option value="" selected disabled>Select purpose</option><option>Networking</option><option>Education</option><option>Entertainment</option><option>News</option></select><span class="error-msg"></span></div>
+            <div class="field"><label for="avg_daily_usage_hours">Screen time per day</label><div class="unit"><input type="number" id="avg_daily_usage_hours" name="avg_daily_usage_hours" min="0" max="24" step="0.1" placeholder="4.5" inputmode="decimal" required /><span>h</span></div><div class="meter"><i id="screen-meter"></i></div><span class="hint" id="hint-screen">Social media and phone use</span><span class="error-msg"></span></div>
+            <div class="field"><label for="daily_unlocks">Phone unlocks per day</label><input type="number" id="daily_unlocks" name="daily_unlocks" min="0" max="1000" step="1" placeholder="120" inputmode="numeric" required /><span class="hint" id="hint-unlocks">A rough number is fine</span><span class="error-msg"></span></div>
+            <div class="field"><label for="study_hours">Study time per day</label><div class="unit"><input type="number" id="study_hours" name="study_hours" min="0" max="24" step="0.1" placeholder="4" inputmode="decimal" required /><span>h</span></div><span class="hint" id="hint-study">Classes and self-study</span><span class="error-msg"></span></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Body and stress</legend>
+          <div class="grid three">
+            <div class="field"><label for="physical_activity_hours">Physical activity per day</label><div class="unit"><input type="number" id="physical_activity_hours" name="physical_activity_hours" min="0" max="24" step="0.1" placeholder="1" inputmode="decimal" required /><span>h</span></div><span class="hint" id="hint-activity">Walking, sport, workouts</span><span class="error-msg"></span></div>
+            <div class="field"><label for="sleep_hours_per_night">Sleep per night</label><div class="unit"><input type="number" id="sleep_hours_per_night" name="sleep_hours_per_night" min="0" max="24" step="0.1" placeholder="7.5" inputmode="decimal" required /><span>h</span></div><div class="meter"><i id="sleep-meter"></i></div><span class="hint" id="hint-sleep">Most adults do best on 7–9 h</span><span class="error-msg"></span></div>
+            <div class="field stress-field"><label id="stress-label">Perceived stress</label><div class="stress-options" id="stress_level_group" role="radiogroup" aria-labelledby="stress-label"><button type="button" role="radio" aria-checked="false" data-value="Low">Low</button><button type="button" role="radio" aria-checked="false" data-value="Medium">Medium</button><button type="button" role="radio" aria-checked="false" data-value="High">High</button><button type="button" role="radio" aria-checked="false" data-value="Very High">Very high</button></div><input type="hidden" id="stress_level" name="stress_level" /><span class="error-msg"></span></div>
+          </div>
+          <div class="budget" id="day-budget" aria-live="polite">
+            <div class="budget-bar" aria-hidden="true"><i class="seg sleep" id="seg-sleep"></i><i class="seg study" id="seg-study"></i><i class="seg move" id="seg-move"></i></div>
+            <p id="budget-text">Your 24 hours: enter sleep, study and activity to see how the day fits together.</p>
+          </div>
+        </fieldset>
+
+        <div class="form-bottom">
+          <p class="form-error" id="form-error" role="alert" hidden></p>
+          <button class="btn primary submit" id="submit-btn" type="submit"><span class="btn-label">Analyse my day</span><span class="spinner" aria-hidden="true"></span></button>
+        </div>
+      </form>
+    </div>
+
+    <aside class="card result-card" aria-live="polite">
+      <div class="state" id="state-idle">
+        <div class="gauge idle"><svg viewBox="0 0 180 180" aria-hidden="true"><circle class="g-bg" cx="90" cy="90" r="72"/></svg><div class="g-val"><strong>—</strong><span>/ 10</span></div></div>
+        <h3>Ready when you are</h3>
+        <p>Fill in the check-in and your score, the habits behind it and a personal plan will appear here.</p>
+      </div>
+      <div class="state" id="state-loading" hidden>
+        <div class="loader" aria-hidden="true"><span></span></div>
+        <h3>Reading your day</h3>
+        <p>Scoring your profile and ranking the habits behind it…</p>
+      </div>
+      <div class="state" id="state-result" hidden>
+        <div class="gauge"><svg viewBox="0 0 180 180" aria-hidden="true"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--mood-a)"/><stop offset="1" stop-color="var(--mood-b)"/></linearGradient></defs><circle class="g-bg" cx="90" cy="90" r="72"/><circle class="g-fg" id="ring-progress" cx="90" cy="90" r="72"/></svg><div class="g-val"><strong id="score-number">0.0</strong><span>/ 10</span></div></div>
+        <span class="level-pill" id="score-band">—</span>
+        <h3 id="result-headline">—</h3>
+        <p id="result-summary"></p>
+        <dl class="mini-stats">
+          <div><dt>Habit pressure</dt><dd id="pressure-value">—</dd></div>
+          <div><dt>Main driver</dt><dd id="driver-value">—</dd></div>
+          <div id="projected-wrap" hidden><dt>If you fix the top habits</dt><dd id="projected-value">—</dd></div>
+        </dl>
+        <p class="save-chip" id="save-chip"></p>
+        <div class="result-actions"><a class="btn ghost" href="#report">Read your full report</a><button class="btn ghost" id="reset-btn" type="button">New check-in</button></div>
+      </div>
+      <div class="state" id="state-error" hidden>
+        <div class="err-mark" aria-hidden="true">!</div>
+        <h3 id="error-label">Something went wrong</h3>
+        <p id="error-copy"></p>
+        <button class="btn ghost" id="error-retry-btn" type="button">Back to the form</button>
+      </div>
+    </aside>
+  </section>
+
+  <section class="wrap report-wrap" id="report" hidden>
+    <div class="card report" id="report-body" tabindex="-1"></div>
+  </section>
+
+  <section class="wrap profile-section" id="profile-section">
+  <div class="section-head"><div><span class="eyebrow">YOUR ACCOUNT</span><h2>Profile & wellness space</h2><p class="sub">Your account details and personal activity stay separate from other users.</p></div></div>
+  <div class="profile-grid">
+    <article class="card profile-card"><div class="profile-avatar" id="profile-avatar">M</div><div><h3 id="profile-name">—</h3><p id="profile-email">—</p><span class="verified-badge">✓ Email verified</span></div></article>
+    <article class="card profile-stat"><span>Check-ins</span><strong id="profile-checkins">—</strong><small>Your saved wellness reports</small></article>
+    <article class="card profile-stat"><span>Latest score</span><strong id="profile-latest-score">—</strong><small id="profile-latest-note">From your most recent check-in</small></article>
+    <article class="card profile-stat"><span>Average score</span><strong id="profile-average">—</strong><small id="profile-average-note">Across your check-ins</small></article>
+  </div>
+</section>
+
+<section class="wrap community" id="community">
+    <div class="section-head"><div><span class="eyebrow">YOUR PROGRESS</span><h2>How your wellness is trending</h2><p class="sub">Built only from your own saved check-ins. Nobody else can see it.</p></div><button class="btn ghost small" id="community-refresh" type="button">Refresh</button></div>
+    <div class="card progress-card" id="community-body"><p class="empty">Loading your progress…</p></div>
+  </section>
+
+  <section class="wrap history" id="history-section">
+    <div class="section-head"><div><h2>Your saved check-ins</h2><p class="sub" id="history-status">Loading…</p></div>
+      <div class="row-actions"><button class="btn ghost small" id="history-refresh" type="button">Refresh</button><button class="btn ghost small" id="history-export" type="button">Export CSV</button><button class="btn ghost small danger" id="history-clear" type="button">Delete all</button></div></div>
+    <p class="notice" id="history-note" hidden></p>
+    <div class="card table-card"><div class="table-scroll"><table class="history-table"><thead><tr><th>Saved</th><th>Profile</th><th>Score</th><th>Main driver</th><th><span class="sr">Actions</span></th></tr></thead><tbody id="history-body"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table></div></div>
+  </section>
+</main>
+
+<dialog id="record-dialog" aria-labelledby="dialog-title">
+  <div class="dialog-head"><h2 id="dialog-title">Saved report</h2><button class="btn ghost small" id="dialog-close" type="button">Close</button></div>
+  <div id="dialog-body"></div>
+</dialog>
+
+<footer class="site-footer"><div class="wrap"><span>MindPulse · student wellness analytics</span><span>An academic project. Lifestyle guidance only, not medical advice.</span></div></footer>
+
+<script src="fx.js?v=5"></script>
+<script src="dropdown.js?v=5"></script>
+<script src="script.js?v=5"></script>
+<script src="history.js?v=5"></script>
+<script src="auth-fx.js?v=5"></script>
+<script src="auth.js?v=5"></script>
+</body>
+</html>

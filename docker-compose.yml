@@ -1,0 +1,16 @@
+# Real MongoDB in one command:   docker compose up -d
+# Data lives in the "mindpulse_mongo" volume, so it survives restarts.
+services:
+  mongo:
+    image: mongo:7
+    container_name: mindpulse-mongo
+    restart: unless-stopped
+    ports: ["27017:27017"]
+    volumes: ["mindpulse_mongo:/data/db"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  mindpulse_mongo:

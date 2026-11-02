@@ -1,0 +1,32 @@
+MindPulse training verification
+
+Dataset: data/student_social_media_mental_health.csv
+Raw rows: 25,000
+Clean rows used: 25,000
+Duplicates removed: 0
+Standardized Academic_Level categories: 9
+Employment_Status categories: 4 (included in the model)
+Country categories available in form: 25
+
+Canonical model pipeline:
+- `python -m src.train` delegates to `src.train_production`
+- Production estimator: CatBoostRegressor + deterministic feature engineering
+- Web/API input contract: 13 fields; engineered model input: 21 fields
+- 100 boosting iterations, depth 5, learning rate 0.04, L2 leaf regularization 10
+- Final artifact refit on all 25,000 clean rows only after evaluation
+
+Validation procedure:
+1. 80% (20,000 rows) training partition and 20% (5,000 rows) untouched random holdout.
+2. Split stratified on the shared score bands: At risk < 5, Moderate 5-<7, Healthy >= 7.
+3. Three-fold GroupKFold validation uses only the training partition.
+4. A separate GroupShuffleSplit evaluates unseen combinations of profile attributes.
+5. The final production artifact is fitted on all clean rows after evaluation metrics are recorded.
+
+Current evaluation:
+- Grouped CV R2 mean ± std: 0.636785 ± 0.008032
+- Random holdout R2: 0.632638; MAE: 0.605472; RMSE: 0.758640
+- Random holdout band accuracy: 0.717000; macro F1: 0.675200
+- Strict unseen-profile R2: 0.632756; MAE: 0.611571; RMSE: 0.764701
+- Strict unseen-profile band accuracy: 0.709556; macro F1: 0.669720
+
+The target is a wellness score, not a clinical diagnosis. The source data may be synthetic or unrepresentative; model scores do not establish clinical validity.

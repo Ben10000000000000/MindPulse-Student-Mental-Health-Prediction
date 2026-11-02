@@ -1,0 +1,10 @@
+MINDPULSE ACCOUNT EMAIL SETUP
+
+1. Copy .env.example to .env.
+2. Set AUTH_SECRET to a long random value.
+3. For Gmail OTP, enable 2-Step Verification on the sending Gmail account and create a Gmail App Password.
+4. Put the App Password in SMTP_PASSWORD (not the normal Gmail password).
+5. Set SMTP_USER and SMTP_FROM to the sending Gmail address.
+6. If the app is being opened locally at http://127.0.0.1:8000/app, keep PUBLIC_APP_URL as shown in .env.example.
+
+Do not put .env into Git or share it publicly.

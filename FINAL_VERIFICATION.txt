@@ -1,0 +1,57 @@
+MindPulse 25K — FINAL VERIFICATION
+==================================
+
+Model/data
+- Dataset: data/student_social_media_mental_health.csv
+- Raw/clean rows: 25,000 / 25,000
+- Holdout split: 20,000 training / 5,000 random holdout test
+- Validation: 3-fold GroupKFold on training partition only
+- Additional generalization check: strict unseen profile-combination holdout
+- Production model: CatBoostRegressor + deterministic feature engineering
+- Production estimator: same CatBoost pipeline for CV, holdout evaluation, and final fit
+- Production artifact refit after evaluation on all 25,000 clean rows
+- Standardized Academic_Level categories: 9
+Employment_Status categories: 4 (included as model input)
+Country categories in form: 25
+- Duplicate rows removed: 0
+- Missing categorical values: explicit __MISSING__ category
+- Score bands shared by training/API: <5 At risk, 5-<7 Moderate, >=7 Healthy
+
+Current saved evaluation (100 boosting iterations)
+- Grouped CV R2 mean ± std: 0.636785 ± 0.008032
+- Random holdout R2: 0.632638
+- Random holdout MAE: 0.605472
+- Random holdout RMSE: 0.758640
+- Random holdout wellness-band accuracy: 0.717000
+- Random holdout macro F1: 0.675200
+- Strict unseen-profile R2: 0.632756
+- Strict unseen-profile band accuracy: 0.709556
+- Strict unseen-profile macro F1: 0.669720
+
+Authentication/data isolation (source inspection; live external services not available here)
+- Password hashing: PBKDF2-SHA256 with per-password random salt
+- Sessions: signed tokens + MongoDB session records + expiry/revocation
+- OTP records: login_otps collection with TTL and attempt limit
+- Protected endpoints include /predict, /history, /auth/me and history item routes
+- Prediction documents include authenticated user_id
+- History queries are user_id scoped
+- Logout revokes the server-side session
+
+Verification performed in this environment
+- Canonical training run: passed; model and metrics regenerated
+- ML artifact/pipeline tests: 4 passed
+- Python source compilation: passed
+- Python source compilation and ML pipeline tests passed; full API/auth suite not run because mongomock is unavailable in this environment
+- /options expected: dataset_rows=25,000, academic_level_count=9, employment_status_count=4, countries=25
+- /model-info: reports CatBoost model and current metrics
+- Sample predictions: finite values in 0-10 range
+- Full auth API test suite: not run; this environment lacks mongomock
+
+Run on Windows after extracting
+    python -m venv .venv
+    .venv\\Scripts\\activate
+    pip install -r requirements-dev.txt
+    pytest -q
+
+Configure .env from .env.example and start MongoDB before testing signup, OTP,
+prediction saving, and private history. Never commit .env or real credentials.

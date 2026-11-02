@@ -1,0 +1,44 @@
+{
+  "model": "CatBoostRegressor + deterministic feature engineering",
+  "estimator_class": "catboost.CatBoostRegressor",
+  "task": "Regression of Mental_Health_Score (0-10); wellness bands are derived from predicted score",
+  "selection": "Fixed CatBoost estimator; grouped cross-validation is a validation estimate, not test-set model selection.",
+  "training_rows": 25000,
+  "evaluation": {
+    "grouped_cv_r2_mean": 0.6367852224196,
+    "grouped_cv_r2_std": 0.008032400458138158,
+    "random_test": {
+      "r2": 0.632637702202838,
+      "mae": 0.6054722446015955,
+      "rmse": 0.7586401624682827,
+      "band_accuracy": 0.717,
+      "band_macro_f1": 0.6752001070114969
+    },
+    "strict_unseen_profile_test": {
+      "r2": 0.6327557934327273,
+      "mae": 0.6115710518497028,
+      "rmse": 0.7647006707435289,
+      "band_accuracy": 0.7095557418273261,
+      "band_macro_f1": 0.669720404931387
+    }
+  },
+  "score_bands": {
+    "edges": [
+      0,
+      5.0,
+      7.0,
+      10.000001
+    ],
+    "labels": [
+      "At risk (low score)",
+      "Moderate",
+      "Healthy (high score)"
+    ]
+  },
+  "limitations": [
+    "This survey-style dataset may be synthetic or unrepresentative of real student populations.",
+    "Predictions are educational wellness estimates, not medical diagnoses or clinical assessments.",
+    "Feature-ablation explanations are associations, not causal effects.",
+    "Random holdout and profile-group holdout measure different generalization settings; neither proves real-world clinical validity."
+  ]
+}

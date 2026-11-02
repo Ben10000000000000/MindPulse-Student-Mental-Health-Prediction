@@ -1,0 +1,57 @@
+{
+  "chosen_model": "CatBoostRegressor + deterministic feature engineering",
+  "task": "Regression of Mental_Health_Score (0-10); wellness bands are derived from predicted score",
+  "training_rows": 25000,
+  "evaluation_split": {
+    "train_rows": 20000,
+    "test_rows": 5000,
+    "strategy": "80/20 stratified by score band; test set held out from CV and fitting during evaluation"
+  },
+  "cv": {
+    "folds": 3,
+    "grouped_on_profile": true,
+    "mean_r2": 0.6367852224196,
+    "std_r2": 0.008032400458138158
+  },
+  "random_test": {
+    "r2": 0.632637702202838,
+    "mae": 0.6054722446015955,
+    "rmse": 0.7586401624682827,
+    "band_accuracy": 0.717,
+    "band_macro_f1": 0.6752001070114969
+  },
+  "strict_unseen_profile_test": {
+    "r2": 0.6327557934327273,
+    "mae": 0.6115710518497028,
+    "rmse": 0.7647006707435289,
+    "band_accuracy": 0.7095557418273261,
+    "band_macro_f1": 0.669720404931387
+  },
+  "training_partition_fit": {
+    "r2": 0.6445816256929787,
+    "mae": 0.5979605986576001,
+    "rmse": 0.7487871352088877,
+    "band_accuracy": 0.71855,
+    "band_macro_f1": 0.6729884418564157
+  },
+  "params": {
+    "iterations": 100,
+    "depth": 5,
+    "learning_rate": 0.04,
+    "l2_leaf_reg": 10,
+    "random_seed": 42,
+    "thread_count": 2
+  },
+  "evaluation_fit_seconds": 5.88,
+  "score_band_edges": [
+    0,
+    5.0,
+    7.0,
+    10.000001
+  ],
+  "score_band_labels": [
+    "At risk (low score)",
+    "Moderate",
+    "Healthy (high score)"
+  ]
+}

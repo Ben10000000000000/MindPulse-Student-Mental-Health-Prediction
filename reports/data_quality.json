@@ -1,0 +1,41 @@
+{
+  "source": "student_social_media_mental_health.csv",
+  "raw_rows": 25000,
+  "duplicates_removed": 0,
+  "clean_rows": 25000,
+  "dropped_for_missing_numeric_or_target": 0,
+  "missing_before_cleaning": {
+    "Age": 0,
+    "Avg_Daily_Usage_Hours": 0,
+    "Daily_Unlocks": 0,
+    "Study_Hours": 0,
+    "Physical_Activity_Hours": 0,
+    "Sleep_Hours_Per_Night": 0,
+    "Stress_Level": 0,
+    "Gender": 0,
+    "Academic_Level": 0,
+    "Employment_Status": 0,
+    "Most_Used_Platform": 1351,
+    "Purpose_Of_Use": 1351,
+    "Country": 0,
+    "Mental_Health_Score": 0
+  },
+  "categorical_missing_policy": "Explicit __MISSING__ category; no target-based imputation",
+  "target": "Mental_Health_Score",
+  "target_min": 1.4,
+  "target_max": 10.0,
+  "base_feature_count": 13,
+  "model_feature_count": 21,
+  "academic_level_count": 9,
+  "score_band_edges": [
+    0,
+    5.0,
+    7.0,
+    10.000001
+  ],
+  "score_band_labels": [
+    "At risk (low score)",
+    "Moderate",
+    "Healthy (high score)"
+  ]
+}
